@@ -28,6 +28,23 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan"/>
 
+        <activity
+            android:name=".admin.AdminDashboardActivity"
+            android:label="Admin Dashboard" />
+
+        <activity
+            android:parentActivityName=".admin.AdminDashboardActivity"
+            android:name=".admin.SubjectManagementActivity"
+            android:label="Subject Management"/>
+        <activity
+            android:parentActivityName=".admin.AdminDashboardActivity"
+            android:name=".admin.EventManagementActivity"
+            android:label="Event Management"/>
+        <activity
+            android:parentActivityName=".admin.AdminDashboardActivity"
+            android:name=".admin.StudentManagementActivity"
+            android:label="Students Management"/>
+
 
     </application>
 

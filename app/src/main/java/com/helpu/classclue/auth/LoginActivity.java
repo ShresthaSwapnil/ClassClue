@@ -12,6 +12,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.helpu.classclue.MainActivity;
 import com.helpu.classclue.R;
+import com.helpu.classclue.admin.AdminDashboardActivity;
 import com.helpu.classclue.utils.SharedPrefsHelper;
 
 public class LoginActivity extends AppCompatActivity {
@@ -86,7 +87,12 @@ public class LoginActivity extends AppCompatActivity {
         prefs.saveUserType(userType);
         prefs.setLoggedIn(true);
 
-        startActivity(new Intent(this, MainActivity.class));
+        // In LoginActivity's validateAndLogin method:
+        if (userType.equals("admin")) {
+            startActivity(new Intent(this, AdminDashboardActivity.class));
+        } else {
+            startActivity(new Intent(this, MainActivity.class));
+        }
         finish();
     }
 

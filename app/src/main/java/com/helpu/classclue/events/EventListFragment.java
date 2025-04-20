@@ -37,9 +37,9 @@ public class EventListFragment extends Fragment {
         // Sample data - replace with actual filtered data
         List<Event> events = new ArrayList<>();
         if(status == 0) { // To Do
-            events.add(new Event("Web Programming", "Today, Monday 17", "11:30 AM - 12:30 PM", 2));
+            events.add(new Event("Web Programming", "Today, Monday 17", "11:30 AM - 12:30 PM", "11:05", "Kathmandu"));
         } else if(status == 1) { // In Progress
-            events.add(new Event("Mobile Development", "Thursday 18", "11:30 AM - 12:30 PM", 1));
+            events.add(new Event("Mobile Development", "Thursday 18", "11:30 AM - 12:30 PM", "12:00","Gyaneshwor"));
         }
 
         EventAdapter adapter = new EventAdapter(events);
