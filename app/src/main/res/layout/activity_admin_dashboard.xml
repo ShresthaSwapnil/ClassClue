@@ -135,5 +135,18 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log Out"
+            android:layout_marginTop="256dp"
+            app:icon="@drawable/ic_logout"
+            app:iconGravity="start"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="@color/red"
+            android:textColor="@color/red"
+            app:iconTint="@color/red"/>
+
     </LinearLayout>
 </ScrollView>

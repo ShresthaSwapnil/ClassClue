@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.google.android.material.button.MaterialButton;
 import com.helpu.classclue.R;
 import com.helpu.classclue.auth.LoginActivity;
@@ -48,15 +50,18 @@ public class ProfileFragment extends Fragment {
     }
 
     private void openEditProfile() {
-        // Implement edit profile flow
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_profile_to_edit);
     }
 
     private void openNotificationSettings() {
-        // Implement notification settings
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_profile_to_notifications);
     }
 
     private void openAbout() {
-        // Implement about screen
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_profile_to_about);
     }
 
     private void logoutUser() {

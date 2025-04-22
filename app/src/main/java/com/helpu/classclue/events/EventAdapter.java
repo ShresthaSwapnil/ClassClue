@@ -29,7 +29,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Event event = eventList.get(position);
-        holder.tvSubject.setText(event.getSubject());
+        holder.tvSubject.setText(event.getSubjectId());
         holder.tvDueDate.setText("Due: " + event.getDate());
         holder.tvTime.setText(event.getTime());
         holder.tvTaskCount.setText(event.getTitle() + " tasks");

@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.helpu.classclue">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -44,6 +47,11 @@
             android:parentActivityName=".admin.AdminDashboardActivity"
             android:name=".admin.StudentManagementActivity"
             android:label="Students Management"/>
+
+        <activity
+            android:parentActivityName=".MainActivity"
+            android:name=".subjects.SubjectRegistrationActivity"
+            android:label="Subject Registration"/>
 
 
     </application>

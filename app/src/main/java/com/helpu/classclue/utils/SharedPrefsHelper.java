@@ -3,6 +3,14 @@ package com.helpu.classclue.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.helpu.classclue.models.Subject;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 public class SharedPrefsHelper {
     private static final String PREFS_NAME = "ClassCluePrefs";
     private static SharedPrefsHelper instance;
@@ -36,12 +44,12 @@ public class SharedPrefsHelper {
     }
 
     // Alarm sound preference
-    public void saveAlarmSound(String soundUri) {
-        sharedPreferences.edit().putString(KEY_ALARM_SOUND, soundUri).apply();
+    public void saveAlarmSound(String uri) {
+        sharedPreferences.edit().putString("alarm_sound_uri", uri).apply();
     }
 
     public String getAlarmSound() {
-        return sharedPreferences.getString(KEY_ALARM_SOUND, "default");
+        return sharedPreferences.getString("alarm_sound_uri", "");
     }
 
     // Login state management
@@ -104,5 +112,29 @@ public class SharedPrefsHelper {
 
     public int getInt(String key) {
         return sharedPreferences.getInt(key, 0);
+    }
+
+    // For admin to set password
+    public void saveRegistrationPassword(String password) {
+        sharedPreferences.edit().putString("reg_password", password).apply();
+    }
+
+    public String getRegistrationPassword() {
+        return sharedPreferences.getString("reg_password", "default_password");
+    }
+
+    // For student registration
+    public void saveRegisteredSubjects(List<Subject> subjects) {
+        Gson gson = new Gson();
+        String json = gson.toJson(subjects);
+        sharedPreferences.edit().putString("registered_subjects", json).apply();
+    }
+
+    public List<Subject> getRegisteredSubjects() {
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("registered_subjects", "");
+        Type type = new TypeToken<ArrayList<Subject>>(){}.getType();
+        List<Subject> subjects = gson.fromJson(json, type);
+        return subjects != null ? subjects : new ArrayList<>();
     }
 }

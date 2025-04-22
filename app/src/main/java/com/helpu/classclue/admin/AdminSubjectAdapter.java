@@ -12,7 +12,7 @@ import java.util.List;
 
 public class AdminSubjectAdapter extends RecyclerView.Adapter<AdminSubjectAdapter.ViewHolder> {
 
-    private final List<Subject> subjects;
+    private List<Subject> subjects;
 
     public AdminSubjectAdapter(List<Subject> subjects) {
         this.subjects = subjects;
@@ -48,5 +48,11 @@ public class AdminSubjectAdapter extends RecyclerView.Adapter<AdminSubjectAdapte
             tvName = itemView.findViewById(R.id.tvName);
             tvSemester = itemView.findViewById(R.id.tvSemester);
         }
+    }
+
+    public void updateSubjects(List<Subject> newSubjects) {
+        subjects.clear();
+        subjects = newSubjects;
+        notifyDataSetChanged();
     }
 }

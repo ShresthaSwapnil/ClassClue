@@ -30,7 +30,7 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Vi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Event event = events.get(position);
         holder.tvTitle.setText(event.getTitle());
-        holder.tvSubject.setText(event.getSubject());
+        holder.tvSubject.setText(event.getSubjectId());
         holder.tvDateTime.setText(String.format("%s • %s", event.getDate(), event.getTime()));
         holder.tvLocation.setText(event.getLocation());
     }

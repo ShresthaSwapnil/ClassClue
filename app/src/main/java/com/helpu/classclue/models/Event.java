@@ -1,74 +1,57 @@
 package com.helpu.classclue.models;
 
+import com.google.firebase.database.PropertyName;
+
 public class Event {
+    private String id;
     private String title;
-    private String subject;
     private String date;
     private String time;
     private String location;
+    private boolean reminder_24h;
+    private boolean reminder_2h;
+    private String subject_id;
 
-    // Constructor
-    public Event(String title, String subject, String date, String time, String location) {
+    public Event() {}  // Needed for Firebase
+
+    public Event(String title, String subject_id, String date, String time, String location) {
         this.title = title;
-        this.subject = subject;
+        this.subject_id = subject_id;
         this.date = date;
         this.time = time;
         this.location = location;
     }
 
-    // Getters
-    public String getTitle() {
-        return title;
-    }
+    // Getters and Setters
+    @PropertyName("id")
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getSubject() {
-        return subject;
-    }
+    @PropertyName("title")
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public String getDate() {
-        return date;
-    }
+    @PropertyName("date")
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 
-    public String getTime() {
-        return time;
-    }
+    @PropertyName("time")
+    public String getTime() { return time; }
+    public void setTime(String time) { this.time = time; }
 
-    public String getLocation() {
-        return location;
-    }
+    @PropertyName("location")
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    // Setters
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    @PropertyName("reminder_24h")
+    public boolean isReminder24h() { return reminder_24h; }
+    public void setReminder24h(boolean reminder_24h) { this.reminder_24h = reminder_24h; }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
+    @PropertyName("reminder_2h")
+    public boolean isReminder2h() { return reminder_2h; }
+    public void setReminder2h(boolean reminder_2h) { this.reminder_2h = reminder_2h; }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    // Overriding toString() for easy representation
-    @Override
-    public String toString() {
-        return "Event{" +
-                "title='" + title + '\'' +
-                ", subject='" + subject + '\'' +
-                ", date='" + date + '\'' +
-                ", time='" + time + '\'' +
-                ", location='" + location + '\'' +
-                '}';
-    }
+    @PropertyName("subject_id")
+    public String getSubjectId() { return subject_id; }
+    public void setSubjectId(String subject_id) { this.subject_id = subject_id; }
 }
-
-

@@ -7,7 +7,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+
+import com.google.android.material.button.MaterialButton;
 import com.helpu.classclue.R;
+import com.helpu.classclue.auth.LoginActivity;
 import com.helpu.classclue.utils.SharedPrefsHelper;
 
 public class AdminDashboardActivity extends AppCompatActivity {
@@ -32,6 +35,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
         cvStudents.setOnClickListener(v -> showStudentManagement());
 
         updateDashboardStats();
+        MaterialButton btnLogout = findViewById(R.id.btnLogout);
+        btnLogout.setOnClickListener(v -> logoutAdmin());
     }
 
     private void updateDashboardStats() {
@@ -72,5 +77,15 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
     private void showStudentManagement() {
         startActivity(new Intent(this, StudentManagementActivity.class));
+    }
+
+    private void logoutAdmin() {
+        SharedPrefsHelper prefs = SharedPrefsHelper.getInstance(this);
+        prefs.clearAll();
+
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finishAffinity();
     }
 }

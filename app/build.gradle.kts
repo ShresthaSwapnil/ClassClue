@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -35,8 +36,27 @@ android {
 }
 
 dependencies {
-    implementation("com.google.android.material:material:1.9.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation(libs.material.v190)
+    implementation(libs.appcompat.v161)
+
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation(libs.firebase.database)
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-paging:2.6.1")
+
+
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+
+    implementation("com.google.firebase:firebase-analytics")
+
+    // Firebase dependencies
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.storage)
+
+    implementation("com.google.code.gson:gson:2.10.1")
+
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

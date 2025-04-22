@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "864615312133",
+    "firebase_url": "https://class-clue-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "class-clue",
+    "storage_bucket": "class-clue.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864615312133:android:6907d2f3efa58dbc63a56c",
+        "android_client_info": {
+          "package_name": "com.helpu.classclue"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCM1ifzv8uBpHh0jLsjCyYbfRlBfUYCkcM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
