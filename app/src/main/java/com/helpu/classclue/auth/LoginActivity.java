@@ -3,13 +3,23 @@ package com.helpu.classclue.auth;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.material.button.MaterialButton;
+import androidx.core.splashscreen.SplashScreen;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.helpu.classclue.MainActivity;
 import com.helpu.classclue.R;
 import com.helpu.classclue.admin.AdminDashboardActivity;
@@ -20,11 +30,15 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputLayout emailInputLayout, passwordInputLayout;
     private TextInputEditText emailEditText, passwordEditText;
     private RadioGroup radioUserType;
-    private MaterialButton btnContinue;
+    private TextView signupRedirectText;
+    private Button btnContinue;
     private SharedPrefsHelper prefs;
+
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         prefs = SharedPrefsHelper.getInstance(this);
@@ -35,7 +49,10 @@ public class LoginActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         radioUserType = findViewById(R.id.radioUserType);
+        signupRedirectText = findViewById(R.id.loginRedirectText);
         btnContinue = findViewById(R.id.btnContinue);
+
+        auth = FirebaseAuth.getInstance();
 
         // Auto-fill last used email
         String lastEmail = prefs.getLastEmail();
@@ -44,6 +61,13 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         btnContinue.setOnClickListener(v -> validateAndLogin());
+
+        signupRedirectText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+            }
+        });
     }
 
     private void validateAndLogin() {
@@ -53,34 +77,40 @@ public class LoginActivity extends AppCompatActivity {
 
         // Get input values
         String email = emailEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
+        String pass = passwordEditText.getText().toString().trim();
         int selectedId = radioUserType.getCheckedRadioButtonId();
         RadioButton radioButton = findViewById(selectedId);
         String userType = radioButton.getText().toString().toLowerCase();
 
-        // Validate email
-        if (email.isEmpty()) {
-            emailInputLayout.setError("Email is required");
-            return;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailInputLayout.setError("Enter valid email address");
-            return;
+        if (!email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            if (!pass.isEmpty()) {
+                auth.signInWithEmailAndPassword(email, pass)
+                        .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                            @Override
+                            public void onSuccess(AuthResult authResult) {
+                                Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+                                if (userType.equals("admin")) {
+                                    startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
+                                } else {
+                                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                }
+                                finish();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            } else {
+                emailInputLayout.setError("Empty fields are not allowed");
+            }
+        } else if (email.isEmpty()) {
+            emailInputLayout.setError("Empty fields are not allowed");
+        } else {
+            passwordInputLayout.setError("Please enter correct email");
         }
 
-        // Validate password
-        if (password.isEmpty()) {
-            passwordInputLayout.setError("Password is required");
-            return;
-        } else if (password.length() < 6) {
-            passwordInputLayout.setError("Password must be at least 6 characters");
-            return;
-        }
-
-        // Validate user type
-        if (!userType.equals("admin") && !userType.equals("student")) {
-            Toast.makeText(this, "Select user type", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         // Save credentials and proceed
         prefs.saveLastEmail(email);
@@ -93,8 +123,9 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }
-        finish();
     }
+
+
 
     @Override
     protected void onResume() {
@@ -102,4 +133,6 @@ public class LoginActivity extends AppCompatActivity {
         // Clear password field on return
         passwordEditText.setText("");
     }
+
+
 }

@@ -6,22 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="32dp"
+    android:background="@drawable/login"
     android:gravity="center">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Class Clue"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="24dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="We got you covered"
         android:textSize="16sp"
-        android:layout_marginBottom="48dp"/>
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="5dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailInputLayout"
@@ -66,21 +60,36 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Student"
-            android:checked="true"/>
+            android:checked="true"
+            style="@style/RadioButtonStyle"/>
 
         <RadioButton
             android:id="@+id/radioAdmin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Admin"/>
+            android:text="Admin"
+            style="@style/RadioButtonStyle"/>
     </RadioGroup>
 
-    <com.google.android.material.button.MaterialButton
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginRedirectText"
+        android:text="Not Registered? Sign Up"
+        android:layout_gravity="center"
+        android:padding="8dp"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/primaryColor"
+        android:textSize="18sp"/>
+
+    <Button
         android:id="@+id/btnContinue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Continue"
+        android:text="Login"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/primaryColor"
         android:textAllCaps="false"
         android:textSize="16sp"
         app:cornerRadius="8dp"
