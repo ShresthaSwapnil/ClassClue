@@ -80,7 +80,7 @@
                 <TextView
                     android:id="@+id/optionEditProfile"
                     style="@style/ProfileOptionItem"
-                    android:text="Edit Profile"
+                    android:text="Edit Name"
                     app:startIconDrawable="@drawable/ic_edit"/>
 
                 <View
