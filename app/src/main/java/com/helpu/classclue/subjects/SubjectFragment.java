@@ -1,5 +1,6 @@
 package com.helpu.classclue.subjects;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -92,7 +93,6 @@ public class SubjectFragment extends Fragment {
             return;
         }
 
-        // Query the student document using the current user's email
         db.collection("students")
                 .whereEqualTo("email", currentUser.getEmail())
                 .limit(1)
@@ -108,78 +108,15 @@ public class SubjectFragment extends Fragment {
                     DocumentSnapshot studentDoc = queryDocumentSnapshots.getDocuments().get(0);
                     Student student = studentDoc.toObject(Student.class);
 
+
                     if (student == null || student.getSubjects() == null || student.getSubjects().isEmpty()) {
                         showLoading(false);
                         showEmptyView(true, "You are not enrolled in any subjects");
                         return;
                     }
 
-                    // Clear existing subjects
-                    subjectList.clear();
+                    fetchSubjects(student.getSubjects());
 
-                    // Create a set to track unique subject IDs to prevent duplicates
-                    List<String> processedSubjectPaths = new ArrayList<>();
-
-                    // Counter for tracking completed fetches
-                    final int[] completedFetches = {0};
-                    final int totalSubjects = student.getSubjects().size();
-
-                    // Fetch each subject reference
-                    for (DocumentReference subjectRef : student.getSubjects()) {
-                        // Skip duplicate references
-                        String subjectPath = subjectRef.getPath();
-                        if (processedSubjectPaths.contains(subjectPath)) {
-                            Log.d(TAG, "Skipping duplicate subject reference: " + subjectPath);
-                            completedFetches[0]++;
-
-                            // Check if this was the last one
-                            if (completedFetches[0] >= totalSubjects) {
-                                finalizeSubjectLoading();
-                            }
-                            continue;
-                        }
-
-                        // Add to processed paths
-                        processedSubjectPaths.add(subjectPath);
-
-                        subjectRef.get().addOnCompleteListener(task -> {
-                            completedFetches[0]++;
-
-                            if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                                Subject subject = task.getResult().toObject(Subject.class);
-                                if (subject != null) {
-                                    // Check for duplicate subject by code and name
-                                    boolean isDuplicate = false;
-                                    for (Subject existingSubject : subjectList) {
-                                        if (existingSubject.getCode().equals(subject.getCode()) &&
-                                                existingSubject.getName().equals(subject.getName())) {
-                                            isDuplicate = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (!isDuplicate) {
-                                        subjectList.add(subject);
-                                    } else {
-                                        Log.d(TAG, "Skipping duplicate subject: " + subject.getCode());
-                                    }
-                                }
-                            }
-
-                            // Check if all subjects have been fetched
-                            if (completedFetches[0] >= totalSubjects) {
-                                finalizeSubjectLoading();
-                            }
-                        }).addOnFailureListener(e -> {
-                            completedFetches[0]++;
-                            Log.e(TAG, "Error fetching subject: ", e);
-
-                            // Check if all subjects have been attempted
-                            if (completedFetches[0] >= totalSubjects) {
-                                finalizeSubjectLoading();
-                            }
-                        });
-                    }
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading student profile: ", e);
@@ -187,6 +124,76 @@ public class SubjectFragment extends Fragment {
                     showEmptyView(true, "Error loading student profile");
                     Toast.makeText(requireContext(), "Failed to load subjects: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void fetchSubjects(List<DocumentReference> subjectRefs) {
+        // Clear existing subjects
+        subjectList.clear();
+        subjectAdapter.notifyDataSetChanged();
+
+        // Create a set to track unique subject IDs to prevent duplicates
+        List<String> processedSubjectPaths = new ArrayList<>();
+
+        // Counter for tracking completed fetches
+        final int[] completedFetches = {0};
+        final int totalSubjects = subjectRefs.size();
+
+        // Fetch each subject reference
+        for (DocumentReference subjectRef : subjectRefs) {
+            // Skip duplicate references
+            String subjectPath = subjectRef.getPath();
+            if (processedSubjectPaths.contains(subjectPath)) {
+                Log.d(TAG, "Skipping duplicate subject reference: " + subjectPath);
+                completedFetches[0]++;
+
+                // Check if this was the last one
+                if (completedFetches[0] >= totalSubjects) {
+                    finalizeSubjectLoading();
+                }
+                continue;
+            }
+
+            // Add to processed paths
+            processedSubjectPaths.add(subjectPath);
+
+            subjectRef.get().addOnCompleteListener(task -> {
+                completedFetches[0]++;
+
+                if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                    Subject subject = task.getResult().toObject(Subject.class);
+                    if (subject != null) {
+                        // Check for duplicate subject by code and name
+                        boolean isDuplicate = false;
+                        for (Subject existingSubject : subjectList) {
+                            if (existingSubject.getCode().equals(subject.getCode()) &&
+                                    existingSubject.getName().equals(subject.getName())) {
+                                isDuplicate = true;
+                                break;
+                            }
+                        }
+
+                        if (!isDuplicate) {
+                            subjectList.add(subject);
+                        } else {
+                            Log.d(TAG, "Skipping duplicate subject: " + subject.getCode());
+                        }
+                    }
+                }
+
+                // Check if all subjects have been fetched
+                if (completedFetches[0] >= totalSubjects) {
+                    finalizeSubjectLoading();
+                }
+            }).addOnFailureListener(e -> {
+                completedFetches[0]++;
+                Log.e(TAG, "Error fetching subject: ", e);
+
+                // Check if all subjects have been attempted
+                if (completedFetches[0] >= totalSubjects) {
+                    finalizeSubjectLoading();
+                }
+            });
+        }
     }
 
     private void finalizeSubjectLoading() {

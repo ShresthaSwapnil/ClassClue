@@ -16,6 +16,7 @@ databindingCommon = "8.9.1"
 firebaseDatabase = "21.0.0"
 activity = "1.10.1"
 firebaseFirestore = "25.1.4"
+firebaseMessaging = "24.1.1"
 
 [libraries]
 appcompat-v161 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
@@ -36,6 +37,7 @@ databinding-common = { group = "androidx.databinding", name = "databinding-commo
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
