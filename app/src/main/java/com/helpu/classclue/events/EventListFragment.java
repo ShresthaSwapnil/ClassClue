@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +18,10 @@ import java.util.List;
 public class EventListFragment extends Fragment {
 
     private static final String ARG_STATUS = "status";
+    private RecyclerView recyclerView;
+    private EventAdapter adapter;
+    private ProgressBar progressBar;
+    private TextView tvNoEvents;
 
     public static EventListFragment newInstance(int status) {
         EventListFragment fragment = new EventListFragment();
@@ -28,23 +34,77 @@ public class EventListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_event_list, container, false);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewEvents);
+
+        // Initialize views
+        recyclerView = view.findViewById(R.id.recyclerViewEvents);
+        progressBar = view.findViewById(R.id.progressBar);
+        tvNoEvents = view.findViewById(R.id.tvNoEvents);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Initialize adapter with empty list
+        adapter = new EventAdapter(new ArrayList<>());
+        recyclerView.setAdapter(adapter);
 
         // Get status from arguments
         int status = getArguments() != null ? getArguments().getInt(ARG_STATUS) : 0;
 
-        // Sample data - replace with actual filtered data
-        List<Event> events = new ArrayList<>();
-        if(status == 0) { // To Do
-            events.add(new Event("Web Programming", "Today, Monday 17", "11:30 AM - 12:30 PM", "11:05", "Kathmandu"));
-        } else if(status == 1) { // In Progress
-            events.add(new Event("Mobile Development", "Thursday 18", "11:30 AM - 12:30 PM", "12:00","Gyaneshwor"));
-        }
-
-        EventAdapter adapter = new EventAdapter(events);
-        recyclerView.setAdapter(adapter);
+        // Load events for this status
+        loadEvents(status);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Refresh events when fragment becomes visible
+        if (getArguments() != null) {
+            int status = getArguments().getInt(ARG_STATUS);
+            loadEvents(status);
+        }
+    }
+
+    private void loadEvents(int status) {
+        showLoading(true);
+
+        EventManager.getInstance().getEvents(status, new EventManager.EventsCallback() {
+            @Override
+            public void onEventsLoaded(List<Event> events) {
+                if (isAdded()) {  // Check if fragment is still attached to avoid crashes
+                    if (events.isEmpty()) {
+                        showNoEvents(true);
+                    } else {
+                        showNoEvents(false);
+                        adapter.updateList(events);
+                    }
+                    showLoading(false);
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                if (isAdded()) {  // Check if fragment is still attached
+                    showLoading(false);
+                    showNoEvents(true);
+                    // Consider showing an error message here
+                }
+            }
+        });
+    }
+
+    private void showLoading(boolean isLoading) {
+        if (progressBar != null) {
+            progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        }
+        if (recyclerView != null) {
+            recyclerView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    private void showNoEvents(boolean isEmpty) {
+        if (tvNoEvents != null) {
+            tvNoEvents.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        }
     }
 }

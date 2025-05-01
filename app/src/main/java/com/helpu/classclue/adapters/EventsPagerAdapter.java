@@ -2,9 +2,9 @@ package com.helpu.classclue.adapters;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.helpu.classclue.events.EventListFragment;
+import com.helpu.classclue.events.EventManager;
 
 public class EventsPagerAdapter extends FragmentStateAdapter {
 
@@ -15,12 +15,13 @@ public class EventsPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        // Return different fragments based on position
+        // Return appropriate fragment based on position
         return EventListFragment.newInstance(position);
     }
 
     @Override
     public int getItemCount() {
-        return 3; // Number of tabs
+        // Three tabs: To Do, In Progress, Completed
+        return 3;
     }
 }
