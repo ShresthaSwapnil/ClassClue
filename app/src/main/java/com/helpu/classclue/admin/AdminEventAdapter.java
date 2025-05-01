@@ -3,6 +3,7 @@ package com.helpu.classclue.admin;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,9 +14,19 @@ import java.util.List;
 public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.ViewHolder> {
 
     private final List<Event> events;
+    private OnEventDeleteListener deleteListener;
+
+    // Interface for delete callbacks
+    public interface OnEventDeleteListener {
+        void onEventDelete(Event event, int position);
+    }
 
     public AdminEventAdapter(List<Event> events) {
         this.events = events;
+    }
+
+    public void setOnEventDeleteListener(OnEventDeleteListener listener) {
+        this.deleteListener = listener;
     }
 
     @NonNull
@@ -33,6 +44,13 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Vi
         holder.tvSubject.setText(event.getSubjectId());
         holder.tvDateTime.setText(String.format("%s • %s", event.getDate(), event.getTime()));
         holder.tvLocation.setText(event.getLocation());
+
+        // Set click listener for delete icon
+        holder.ivDelete.setOnClickListener(v -> {
+            if (deleteListener != null) {
+                deleteListener.onEventDelete(event, holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -42,6 +60,7 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Vi
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvTitle, tvSubject, tvDateTime, tvLocation;
+        ImageView ivDelete;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -49,6 +68,7 @@ public class AdminEventAdapter extends RecyclerView.Adapter<AdminEventAdapter.Vi
             tvSubject = itemView.findViewById(R.id.tvSubject);
             tvDateTime = itemView.findViewById(R.id.tvDateTime);
             tvLocation = itemView.findViewById(R.id.tvLocation);
+            ivDelete = itemView.findViewById(R.id.ivDelete);
         }
     }
 }

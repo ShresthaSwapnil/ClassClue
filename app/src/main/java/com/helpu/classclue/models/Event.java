@@ -3,7 +3,6 @@ package com.helpu.classclue.models;
 import com.google.firebase.database.PropertyName;
 
 public class Event {
-    private String id;
     private String title;
     private String date;
     private String time;
@@ -23,9 +22,6 @@ public class Event {
     }
 
     // Getters and Setters
-    @PropertyName("id")
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
 
     @PropertyName("title")
     public String getTitle() { return title; }
@@ -43,15 +39,15 @@ public class Event {
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
 
-    @PropertyName("reminder_24h")
+    @PropertyName("reminder24h")
     public boolean isReminder24h() { return reminder_24h; }
     public void setReminder24h(boolean reminder_24h) { this.reminder_24h = reminder_24h; }
 
-    @PropertyName("reminder_2h")
+    @PropertyName("reminder2h")
     public boolean isReminder2h() { return reminder_2h; }
     public void setReminder2h(boolean reminder_2h) { this.reminder_2h = reminder_2h; }
 
-    @PropertyName("subject_id")
+    @PropertyName("subjectId")
     public String getSubjectId() { return subject_id; }
     public void setSubjectId(String subject_id) { this.subject_id = subject_id; }
 }
