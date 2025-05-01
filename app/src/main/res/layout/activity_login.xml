@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="We got you covered"
         android:textSize="16sp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -36,7 +36,7 @@
         android:id="@+id/passwordInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -47,30 +47,6 @@
             android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <RadioGroup
-        android:id="@+id/radioUserType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="24dp">
-
-        <RadioButton
-            android:id="@+id/radioStudent"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Student"
-            android:checked="true"
-            style="@style/RadioButtonStyle"/>
-
-        <RadioButton
-            android:id="@+id/radioAdmin"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Admin"
-            style="@style/RadioButtonStyle"/>
-    </RadioGroup>
 
     <TextView
         android:layout_width="wrap_content"
@@ -81,7 +57,8 @@
         android:padding="8dp"
         android:layout_marginTop="10dp"
         android:textColor="@color/primaryColor"
-        android:textSize="18sp"/>
+        android:textSize="18sp"
+        android:textStyle="bold"/>
 
     <Button
         android:id="@+id/btnContinue"
