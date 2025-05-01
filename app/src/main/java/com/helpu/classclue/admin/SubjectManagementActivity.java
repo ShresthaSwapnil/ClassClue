@@ -60,7 +60,7 @@ public class SubjectManagementActivity extends AppCompatActivity implements AddS
                         List<Subject> subjects = new ArrayList<>();
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             Subject subject = document.toObject(Subject.class);
-                            subject.setId(document.getId());
+                            subject.setCode(document.getId());
                             subjects.add(subject);
                         }
                         adapter.updateSubjects(subjects);

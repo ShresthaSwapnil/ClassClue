@@ -3,12 +3,10 @@ package com.helpu.classclue.auth;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,20 +16,20 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.helpu.classclue.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
     FirebaseFirestore db;
     private TextInputEditText signupEmail, signupPassword, signupName;
-    private Button signupButton;
-    private TextView loginRedirectText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +42,15 @@ public class SignUpActivity extends AppCompatActivity {
         signupEmail = findViewById(R.id.signup_email);
         signupPassword = findViewById(R.id.signup_password);
         signupName = findViewById(R.id.signup_username);
-        signupButton = findViewById(R.id.signup_button);
-        loginRedirectText = findViewById(R.id.loginRedirectText);
+        Button signupButton = findViewById(R.id.signup_button);
+        TextView loginRedirectText = findViewById(R.id.loginRedirectText);
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String user = signupEmail.getText().toString().trim();
-                String pass = signupPassword.getText().toString().trim();
-                String name = signupName.getText().toString().trim();
+                String user = Objects.requireNonNull(signupEmail.getText()).toString().trim();
+                String pass = Objects.requireNonNull(signupPassword.getText()).toString().trim();
+                String name = Objects.requireNonNull(signupName.getText()).toString().trim();
 
                 if (user.isEmpty()){
                     signupEmail.setError("Email cannot be empty");
@@ -104,10 +102,11 @@ public class SignUpActivity extends AppCompatActivity {
 
         if (role.equals("student")) {
             Map<String, Object> studentDoc = new HashMap<>();
-            studentDoc.put("studentId", ""); // Set blank for now
+            studentDoc.put("studentId", "E2300"); // Set blank for now
             studentDoc.put("name", name);
             studentDoc.put("email", email);
-            studentDoc.put("semester", ""); // Set blank for now
+            studentDoc.put("semester", "1"); // Set blank for now
+            studentDoc.put("subjects", new ArrayList<DocumentReference>());
 
             db.collection("students").document(email).set(studentDoc)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {

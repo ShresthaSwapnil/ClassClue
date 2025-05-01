@@ -5,6 +5,8 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.helpu.classclue.R;
@@ -43,18 +45,22 @@ public class StudentManagementActivity extends AppCompatActivity {
                     students.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         Log.d(TAG, document.getId() + " => " + document.getData());
+
                         String studentId = document.getString("studentId");
                         String name = document.getString("name");
                         String email = document.getString("email");
-                        String intake = document.getString("semester");
+                        String semester = document.getString("semester");
+                        DocumentReference subjectsRef = document.getDocumentReference("subjects");
 
-                        // Handle null values appropriately
+                        // Handle nulls
                         if (studentId == null) studentId = "";
                         if (name == null) name = "";
                         if (email == null) email = "";
-                        if (intake == null) intake = "";
+                        if (semester == null) semester = "";
 
-                        Student student = new Student(studentId, name, email, intake);
+                        Student student = new Student(studentId, name, email, semester);
+                        student.setSubjects((List<DocumentReference>) subjectsRef);
+
                         students.add(student);
                     }
                     adapter.notifyDataSetChanged();
@@ -63,4 +69,5 @@ public class StudentManagementActivity extends AppCompatActivity {
                     Log.w(TAG, "Error getting documents: ", e);
                 });
     }
+
 }

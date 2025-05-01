@@ -1,12 +1,16 @@
 package com.helpu.classclue.models;
 
 import com.google.firebase.database.PropertyName;
+import com.google.firebase.firestore.DocumentReference;
+
+import java.util.List;
 
 public class Student {
     private String studentId;
     private String name;
     private String email;
     private String semester;
+    private List<DocumentReference> subjects;
 
     // Constructor
     public Student() {}
@@ -50,6 +54,14 @@ public class Student {
         this.semester = semester;
     }
 
+    @PropertyName("subjects")
+    public List<DocumentReference> getSubjects() {
+        return subjects;
+    }
+    public void setSubjects(List<DocumentReference> subjects) {
+        this.subjects = subjects;
+    }
+
     // Overriding toString() for easy representation
     @Override
     public String toString() {
@@ -58,6 +70,7 @@ public class Student {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", intake='" + semester + '\'' +
+                ", subjects='[" + semester +"]"+ '\'' +
                 '}';
     }
 }
