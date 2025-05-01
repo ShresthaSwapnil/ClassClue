@@ -1,11 +1,12 @@
 package com.helpu.classclue.admin;
 
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.helpu.classclue.R;
 import com.helpu.classclue.models.Student;
 import java.util.ArrayList;
@@ -16,32 +17,50 @@ public class StudentManagementActivity extends AppCompatActivity {
     private AdminStudentAdapter adapter;
     private List<Student> students = new ArrayList<>();
 
+    FirebaseFirestore db;
+    private static final String TAG = "StudentManagement";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_management);
 
+        db = FirebaseFirestore.getInstance();
+
         RecyclerView recyclerView = findViewById(R.id.rvStudents);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // Sample data
-        students.add(new Student("S12345", "John Doe", "john@student.help.edu.my", "2025-1"));
-        students.add(new Student("S67890", "Jane Smith", "jane@student.help.edu.my", "2025-1"));
 
         adapter = new AdminStudentAdapter(students);
         recyclerView.setAdapter(adapter);
 
-        FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
-        fabAdd.setOnClickListener(v -> showAddStudentDialog());
+        loadStudentsFromFirestore();
     }
 
-    private void showAddStudentDialog() {
-        AddStudentDialog dialog = new AddStudentDialog();
-        dialog.show(getSupportFragmentManager(), "AddStudentDialog");
-    }
+    private void loadStudentsFromFirestore() {
+        db.collection("students")
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    students.clear();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        String studentId = document.getString("studentId");
+                        String name = document.getString("name");
+                        String email = document.getString("email");
+                        String intake = document.getString("semester");
 
-    public void addNewStudent(Student student) {
-        students.add(student);
-        adapter.notifyItemInserted(students.size() - 1);
+                        // Handle null values appropriately
+                        if (studentId == null) studentId = "";
+                        if (name == null) name = "";
+                        if (email == null) email = "";
+                        if (intake == null) intake = "";
+
+                        Student student = new Student(studentId, name, email, intake);
+                        students.add(student);
+                    }
+                    adapter.notifyDataSetChanged();
+                })
+                .addOnFailureListener(e -> {
+                    Log.w(TAG, "Error getting documents: ", e);
+                });
     }
 }

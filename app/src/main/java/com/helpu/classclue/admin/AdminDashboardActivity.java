@@ -2,6 +2,7 @@ package com.helpu.classclue.admin;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -9,18 +10,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.AggregateQuerySnapshot;
+import com.google.firebase.firestore.AggregateSource;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.helpu.classclue.R;
 import com.helpu.classclue.auth.LoginActivity;
 import com.helpu.classclue.utils.SharedPrefsHelper;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
-
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_dashboard);
+
+        db = FirebaseFirestore.getInstance();
 
         // Initialize stat cards
         View cardSubjects = findViewById(R.id.cardSubjects);
@@ -58,15 +64,10 @@ public class AdminDashboardActivity extends AppCompatActivity {
         TextView tvStudentsTitle = ((ViewGroup) findViewById(R.id.cardStudents))
                 .findViewById(R.id.tvStatTitle);
 
-        // Set values
-        tvSubjectsValue.setText("12");
-        tvSubjectsTitle.setText("Subjects");
-
-        tvEventsValue.setText("45");
-        tvEventsTitle.setText("Events");
-
-        tvStudentsValue.setText("150");
-        tvStudentsTitle.setText("Students");
+        // Fetch and update the counts from Firestore
+        fetchCollectionCount("subjects", tvSubjectsValue, tvSubjectsTitle);
+        fetchCollectionCount("events", tvEventsValue, tvEventsTitle);
+        fetchCollectionCount("students", tvStudentsValue, tvStudentsTitle);
     }
 
     private void showSubjectManagement() {
@@ -89,5 +90,26 @@ public class AdminDashboardActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finishAffinity();
+    }
+
+    private void fetchCollectionCount(String collectionName, TextView textView, TextView titleTextView) {
+        db = FirebaseFirestore.getInstance();
+        db.collection(collectionName)
+                .count()
+                .get(AggregateSource.SERVER)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        AggregateQuerySnapshot snapshot = task.getResult();
+                        long count = snapshot.getCount();
+                        // Update the TextView with the count
+                        textView.setText(String.valueOf(count));
+                        titleTextView.setText(collectionName);
+                    } else {
+                        Log.e("AdminDashboard", "Error getting count for " + collectionName, task.getException());
+                        // Handle error (e.g., display an error message)
+                        textView.setText("Error");
+                        titleTextView.setText(collectionName);
+                    }
+                });
     }
 }

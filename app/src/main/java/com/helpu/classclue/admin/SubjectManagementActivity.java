@@ -1,47 +1,49 @@
 package com.helpu.classclue.admin;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.helpu.classclue.R;
 import com.helpu.classclue.models.Subject;
-import com.helpu.classclue.utils.FirebaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubjectManagementActivity extends AppCompatActivity {
+public class SubjectManagementActivity extends AppCompatActivity implements AddSubjectDialog.SubjectAddedListener {
 
     private AdminSubjectAdapter adapter;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_subject_management);
 
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
+
         RecyclerView recyclerView = findViewById(R.id.rvSubjects);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Subject> subjects = new ArrayList<>();
-        // Add sample subjects
-        subjects.add(new Subject("BIT314", "Mobile Development", "Android development basics", "2025-1",12));
-        subjects.add(new Subject("BIT216", "Web Programming", "Web development fundamentals", "2025-1",24));
 
         adapter = new AdminSubjectAdapter(subjects);
         recyclerView.setAdapter(adapter);
 
         FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
         fabAdd.setOnClickListener(v -> showAddSubjectDialog());
-
+        loadSubjectsFromFirestore();
     }
 
     private void showAddSubjectDialog() {
@@ -49,25 +51,33 @@ public class SubjectManagementActivity extends AppCompatActivity {
         dialog.show(getSupportFragmentManager(), "AddSubjectDialog");
     }
 
-    public void loadSubjectsFromFirebase() {
-        FirebaseHelper.getInstance().getSubjectsRef()
-                .addValueEventListener(new ValueEventListener() {
+    public void loadSubjectsFromFirestore() {
+        db.collection("subjects")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         List<Subject> subjects = new ArrayList<>();
-                        for (DataSnapshot subjectSnapshot : snapshot.getChildren()) {
-                            Subject subject = subjectSnapshot.getValue(Subject.class);
-                            subject.setId(subjectSnapshot.getKey());
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            Subject subject = document.toObject(Subject.class);
+                            subject.setId(document.getId());
                             subjects.add(subject);
                         }
                         adapter.updateSubjects(subjects);
                     }
-
+                })
+                .addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                    public void onFailure(@NonNull Exception e) {
                         Toast.makeText(SubjectManagementActivity.this,
-                                "Failed to load subjects: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                                "Failed to load subjects: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    public void onSubjectAdded() {
+        // Refresh the subjects when a new one is added
+        loadSubjectsFromFirestore();
     }
 }

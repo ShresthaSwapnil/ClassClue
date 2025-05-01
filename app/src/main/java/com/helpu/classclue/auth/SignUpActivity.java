@@ -101,5 +101,26 @@ public class SignUpActivity extends AppCompatActivity {
                         Toast.makeText(SignUpActivity.this, "SignUp Successful", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        if (role.equals("student")) {
+            Map<String, Object> studentDoc = new HashMap<>();
+            studentDoc.put("studentId", ""); // Set blank for now
+            studentDoc.put("name", name);
+            studentDoc.put("email", email);
+            studentDoc.put("semester", ""); // Set blank for now
+
+            db.collection("students").document(email).set(studentDoc)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            // You could log or show success for students collection too
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(SignUpActivity.this, "Failed to store student data", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 }

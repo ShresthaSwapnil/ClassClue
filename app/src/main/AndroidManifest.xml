@@ -49,7 +49,7 @@
             android:parentActivityName=".admin.AdminDashboardActivity" />
         <activity
             android:name=".admin.StudentManagementActivity"
-            android:label="Students Management"
+            android:label="All Students"
             android:parentActivityName=".admin.AdminDashboardActivity" />
         <activity
             android:name=".subjects.SubjectRegistrationActivity"
