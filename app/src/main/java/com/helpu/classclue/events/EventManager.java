@@ -58,9 +58,13 @@ public class EventManager {
                         String time = document.getString("time");
                         String title = document.getString("title");
                         String location = document.getString("location");
+                        Boolean is24h = document.getBoolean("reminder24h");
+                        Boolean is2h = document.getBoolean("reminder2h");
 
                         // Create event
-                        Event event = new Event(subjectId, date, time, title, location);
+                        Event event = new Event(title, subjectId, date, time, location);
+                        event.setReminder2h(Boolean.TRUE.equals(is2h));
+                        event.setReminder24h(Boolean.TRUE.equals(is24h));
 
                         // Determine the status of the event
                         int eventStatus = determineEventStatus(date, time, currentDate);
@@ -113,7 +117,7 @@ public class EventManager {
             // Check if event is upcoming within 1 hour
             Calendar oneHourFromNow = Calendar.getInstance();
             oneHourFromNow.setTime(currentDate);
-            oneHourFromNow.add(Calendar.HOUR_OF_DAY, 1);
+            oneHourFromNow.add(Calendar.HOUR_OF_DAY, 23);
 
             if (combinedDateTime.before(oneHourFromNow.getTime())) {
                 return STATUS_IN_PROGRESS;

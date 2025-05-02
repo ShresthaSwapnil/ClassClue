@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +21,10 @@ import com.helpu.classclue.models.Subject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SubjectManagementActivity extends AppCompatActivity implements AddSubjectDialog.SubjectAddedListener {
+public class SubjectManagementActivity extends AppCompatActivity
+        implements AddSubjectDialog.SubjectAddedListener,
+        EditSubjectDialog.SubjectEditedListener,
+        AdminSubjectAdapter.OnSubjectActionListener {
 
     private AdminSubjectAdapter adapter;
     private FirebaseFirestore db;
@@ -38,7 +42,7 @@ public class SubjectManagementActivity extends AppCompatActivity implements AddS
 
         List<Subject> subjects = new ArrayList<>();
 
-        adapter = new AdminSubjectAdapter(subjects);
+        adapter = new AdminSubjectAdapter(subjects, this);
         recyclerView.setAdapter(adapter);
 
         FloatingActionButton fabAdd = findViewById(R.id.fabAdd);
@@ -79,5 +83,44 @@ public class SubjectManagementActivity extends AppCompatActivity implements AddS
     public void onSubjectAdded() {
         // Refresh the subjects when a new one is added
         loadSubjectsFromFirestore();
+    }
+
+    @Override
+    public void onSubjectEdited() {
+        // Refresh the subjects when one is edited
+        loadSubjectsFromFirestore();
+    }
+
+    @Override
+    public void onEditSubject(Subject subject, int position) {
+        // Show the edit dialog
+        EditSubjectDialog dialog = EditSubjectDialog.newInstance(subject);
+        dialog.setSubjectEditedListener(this);
+        dialog.show(getSupportFragmentManager(), "EditSubjectDialog");
+    }
+
+    @Override
+    public void onDeleteSubject(Subject subject, int position) {
+        // Show confirmation dialog
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Subject")
+                .setMessage("Are you sure you want to delete this subject?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    deleteSubjectFromFirestore(subject, position);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void deleteSubjectFromFirestore(Subject subject, int position) {
+        db.collection("subjects").document(subject.getCode())
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Subject deleted successfully", Toast.LENGTH_SHORT).show();
+                    adapter.removeSubject(position);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to delete subject: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

@@ -50,7 +50,6 @@ public class StudentManagementActivity extends AppCompatActivity {
                         String name = document.getString("name");
                         String email = document.getString("email");
                         String semester = document.getString("semester");
-                        DocumentReference subjectsRef = document.getDocumentReference("subjects");
 
                         // Handle nulls
                         if (studentId == null) studentId = "";
@@ -58,8 +57,8 @@ public class StudentManagementActivity extends AppCompatActivity {
                         if (email == null) email = "";
                         if (semester == null) semester = "";
 
+
                         Student student = new Student(studentId, name, email, semester);
-                        student.setSubjects((List<DocumentReference>) subjectsRef);
 
                         students.add(student);
                     }
